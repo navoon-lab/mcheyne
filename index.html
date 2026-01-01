@@ -1,204 +1,170 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<title>맥체인 성경읽기</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="manifest" href="manifest.json">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>맥체인 성경읽기 (1년 2독)</title>
 
-<style>
-body {
-  margin: 0;
-  background: #f2f2f2;
-  font-family: -apple-system, BlinkMacSystemFont, "Noto Sans KR", sans-serif;
-}
-.app {
-  max-width: 420px;
-  margin: auto;
-  padding: 16px;
-}
-.card {
-  background: #fff;
-  border-radius: 20px;
-  padding: 20px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-}
-.date {
-  text-align: center;
-  font-weight: bold;
-  font-size: 18px;
-  margin-bottom: 20px;
-}
-.readings {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
-.circle {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  border: 1px solid #ddd;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  font-size: 16px;
-}
-.title {
-  text-align: center;
-  font-size: 16px;
-  margin-bottom: 10px;
-}
-.subtitle {
-  text-align: center;
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 14px;
-}
-.prayer {
-  text-align: center;
-  color: #666;
-  margin-bottom: 16px;
-}
-.progress-box {
-  margin-bottom: 16px;
-}
-.progress {
-  width: 100%;
-  height: 10px;
-  background: #eee;
-  border-radius: 6px;
-  overflow: hidden;
-}
-.progress-bar {
-  height: 100%;
-  background: #7b61ff;
-  width: 0%;
-}
-.progress-text {
-  text-align: center;
-  font-size: 14px;
-  margin-top: 6px;
-}
-button {
-  width: 100%;
-  padding: 14px;
-  background: #7b61ff;
-  color: #fff;
-  border: none;
-  border-radius: 14px;
-  font-size: 16px;
-}
-.calendar {
-  margin-top: 20px;
-}
-.calendar table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: center;
-  font-size: 14px;
-}
-.calendar th, .calendar td {
-  padding: 6px;
-}
-.today {
-  background: #7b61ff;
-  color: #fff;
-  border-radius: 50%;
-}
-</style>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont;
+      margin: 0;
+      background: #f5f5f5;
+    }
+    .container {
+      max-width: 420px;
+      margin: auto;
+      background: white;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    h1 {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+    .today {
+      color: purple;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .circles {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin: 20px 0;
+    }
+    .circle {
+      border: 2px solid #ccc;
+      border-radius: 50%;
+      height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: 12px;
+      padding: 10px;
+      cursor: pointer;
+    }
+    .circle.done {
+      background: purple;
+      color: white;
+      border-color: purple;
+    }
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+      text-align: center;
+      font-size: 13px;
+    }
+    .day {
+      padding: 10px 0;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+    .day.today {
+      border: 1px solid purple;
+    }
+    .day.selected {
+      background: purple;
+      color: white;
+    }
+  </style>
 </head>
 
 <body>
-<div class="app">
-  <div class="card">
+<div class="container">
 
-    <div class="date" id="date"></div>
-
-    <div class="readings">
-      <div class="circle">창</div>
-      <div class="circle">마</div>
-      <div class="circle">시</div>
-      <div class="circle">행</div>
-    </div>
-
-    <div class="title" id="readingToday"></div>
-    <div class="subtitle" id="readingTomorrow"></div>
-
-    <div class="prayer">
-      말씀을 두 배로 먹는 은혜를 주소서.
-    </div>
-
-    <div class="progress-box">
-      <div class="progress">
-        <div class="progress-bar" id="bar"></div>
-      </div>
-      <div class="progress-text" id="progressText"></div>
-    </div>
-
-    <button onclick="complete()">오늘(2일 분량) 읽기 완료</button>
-
-    <div class="calendar" id="calendar"></div>
-
+  <div style="display:flex;justify-content:space-between;">
+    <h1 id="dateTitle"></h1>
+    <span class="today" onclick="goToday()">오늘</span>
   </div>
+
+  <div class="circles">
+    <div class="circle" onclick="toggle(0)" id="r0"></div>
+    <div class="circle" onclick="toggle(1)" id="r1"></div>
+    <div class="circle" onclick="toggle(2)" id="r2"></div>
+    <div class="circle" onclick="toggle(3)" id="r3"></div>
+  </div>
+
+  <p style="text-align:center;font-size:14px;">
+    주님께 날마다 나아가도록 도와주십시오.
+  </p>
+
+  <div class="calendar" id="calendar"></div>
+
 </div>
 
 <script>
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("service-worker.js");
+/* =========================
+   맥체인 예시 데이터
+   (실제 사용 시 365일까지 확장)
+========================= */
+const PLAN = [
+  ["창 1-4 / 창 5-8", "마 1-2 / 마 3-4", "시 1-2 / 시 3-4", "행 1-2 / 행 3-4"],
+  ["창 9-12 / 창 13-16", "마 5-6 / 마 7-8", "시 5-6 / 시 7-8", "행 5-6 / 행 7-8"],
+  ["창 17-20 / 창 21-24", "마 9-10 / 마 11-12", "시 9-10 / 시 11-12", "행 9-10 / 행 11-12"]
+];
+
+let selected = new Date();
+const state = JSON.parse(localStorage.getItem("check") || "{}");
+
+function dayOfYear(d) {
+  const start = new Date(d.getFullYear(),0,1);
+  return Math.floor((d-start)/86400000);
 }
 
-const today = new Date();
-const year = today.getFullYear();
-const start = new Date(year, 0, 1);
-const dayOfYear = Math.floor((today - start) / 86400000) + 1;
+function render() {
+  document.getElementById("dateTitle").innerText =
+    selected.toLocaleDateString("ko-KR");
 
-document.getElementById("date").innerText =
-  `${year}.${today.getMonth()+1}.${today.getDate()}  오늘`;
+  const idx = dayOfYear(selected) % PLAN.length;
 
-document.getElementById("readingToday").innerText =
-  `오늘: 맥체인 ${dayOfYear}일`;
-document.getElementById("readingTomorrow").innerText =
-  `함께 읽기: ${dayOfYear + 1}일`;
+  PLAN[idx].forEach((txt,i)=>{
+    const el = document.getElementById("r"+i);
+    el.innerText = txt;
+    const key = selected.toDateString()+i;
+    el.classList.toggle("done", state[key]);
+  });
 
-const key = "mcheyne-2read";
-let done = JSON.parse(localStorage.getItem(key)) || [];
+  renderCalendar();
+}
 
-function complete() {
-  const d = today.toISOString().slice(0,10);
-  if (!done.includes(d)) {
-    done.push(d);
-    localStorage.setItem(key, JSON.stringify(done));
+function toggle(i){
+  const key = selected.toDateString()+i;
+  state[key] = !state[key];
+  localStorage.setItem("check",JSON.stringify(state));
+  render();
+}
+
+function goToday(){
+  selected = new Date();
+  render();
+}
+
+function renderCalendar(){
+  const cal = document.getElementById("calendar");
+  cal.innerHTML = "";
+  const year = selected.getFullYear();
+  const month = selected.getMonth();
+  const first = new Date(year,month,1).getDay();
+  const days = new Date(year,month+1,0).getDate();
+
+  for(let i=0;i<first;i++) cal.innerHTML += "<div></div>";
+
+  for(let d=1;d<=days;d++){
+    const date = new Date(year,month,d);
+    const div = document.createElement("div");
+    div.innerText = d;
+    div.className = "day";
+    if(date.toDateString()===new Date().toDateString()) div.classList.add("today");
+    if(date.toDateString()===selected.toDateString()) div.classList.add("selected");
+    div.onclick=()=>{selected=date;render();}
+    cal.appendChild(div);
   }
-  update();
 }
 
-function update() {
-  const completedDays = done.length * 2;
-  const percent = (completedDays / 730 * 100).toFixed(1);
-  document.getElementById("bar").style.width = percent + "%";
-  document.getElementById("progressText").innerText =
-    `2독 진행률 ${percent}% (${completedDays}/730일)`;
-}
-update();
-
-function drawCalendar() {
-  const first = new Date(year, today.getMonth(), 1).getDay();
-  const last = new Date(year, today.getMonth()+1, 0).getDate();
-  let html = "<table><tr>";
-  ["일","월","화","수","목","금","토"].forEach(d => html += `<th>${d}</th>`);
-  html += "</tr><tr>";
-  for(let i=0;i<first;i++) html += "<td></td>";
-  for(let d=1; d<=last; d++) {
-    const cls = d === today.getDate() ? "today" : "";
-    html += `<td class="${cls}">${d}</td>`;
-    if((d+first)%7===0) html+="</tr><tr>";
-  }
-  html += "</tr></table>";
-  document.getElementById("calendar").innerHTML = html;
-}
-drawCalendar();
+render();
 </script>
 </body>
 </html>
