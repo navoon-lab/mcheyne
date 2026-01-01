@@ -1,8 +1,0 @@
-{
-  "name": "맥체인 성경읽기 (1년 2독)",
-  "short_name": "맥체인2독",
-  "start_url": "index.html",
-  "display": "standalone",
-  "theme_color": "#7b61ff",
-  "background_color": "#ffffff"
-}
